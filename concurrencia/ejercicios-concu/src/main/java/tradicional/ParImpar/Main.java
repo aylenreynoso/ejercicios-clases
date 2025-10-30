@@ -1,4 +1,4 @@
-package tradicional;
+package tradicional.ParImpar;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -7,8 +7,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Lock lock = new ReentrantLock();
-        Condition esImparUltimoImpreso = lock.newCondition();
-        Condition esParUltimoImpreso = lock.newCondition();
+        Condition condicionPar = lock.newCondition();
+        Condition condicionImpar = lock.newCondition();
         final Integer[] ultimoImpreso = {-1};
 
         Thread tPares = new Thread(() -> {
@@ -17,11 +17,11 @@ public class Main {
 
                try {
                    while (ultimoImpreso[0] % 2 == 0) {
-                           esImparUltimoImpreso.await();
+                           condicionPar.await();
                    }
                    System.out.printf("P: %d\n", i);
                    ultimoImpreso[0] = i;
-                   esParUltimoImpreso.signal();
+                   condicionImpar.signal();
                } catch (InterruptedException e) {
                    throw new RuntimeException(e);
                } finally {
@@ -35,11 +35,11 @@ public class Main {
 
                 try {
                     while (ultimoImpreso[0] % 2 != 0) {
-                        esParUltimoImpreso.await();
+                        condicionImpar.await();
                     }
                     System.out.printf("I: %d\n", i);
                     ultimoImpreso[0] = i;
-                    esImparUltimoImpreso.signal();
+                    condicionPar.signal();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } finally {

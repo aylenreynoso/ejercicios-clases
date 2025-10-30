@@ -14,6 +14,7 @@ public class Main {
         long startTime = System.nanoTime();
 
         for (int i=0; i<inputImages.size(); i++) {
+
             String inputImagePath = inputImages.get(i);
             InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(inputImagePath);
             if (inputStream == null) {
@@ -22,7 +23,7 @@ public class Main {
 
             BufferedImage img = ImageIO.read(inputStream);
 
-            SVDImageCompressor compressor = new ConcurrentSVDCompressor();
+            SVDImageCompressor compressor = new SimpleSVDCompressor();
             BufferedImage compressedImage = compressor.compress(img);
 
             String outputImagePath = String.format("output-%s", inputImagePath);
