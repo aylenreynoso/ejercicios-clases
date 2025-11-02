@@ -7,8 +7,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Lock lock = new ReentrantLock();
-        Condition condicionPar = lock.newCondition();
-        Condition condicionImpar = lock.newCondition();
+        Condition esImparUltimoImpreso = lock.newCondition();
+        Condition esParUltimoImpreso = lock.newCondition();
         final Integer[] ultimoImpreso = {-1};
 
         Thread tPares = new Thread(() -> {
@@ -17,11 +17,11 @@ public class Main {
 
                try {
                    while (ultimoImpreso[0] % 2 == 0) {
-                           condicionPar.await();
+                           esImparUltimoImpreso.await();
                    }
                    System.out.printf("P: %d\n", i);
                    ultimoImpreso[0] = i;
-                   condicionImpar.signal();
+                   esParUltimoImpreso.signal();
                } catch (InterruptedException e) {
                    throw new RuntimeException(e);
                } finally {
@@ -35,11 +35,11 @@ public class Main {
 
                 try {
                     while (ultimoImpreso[0] % 2 != 0) {
-                        condicionImpar.await();
+                        esParUltimoImpreso.await();
                     }
                     System.out.printf("I: %d\n", i);
                     ultimoImpreso[0] = i;
-                    condicionPar.signal();
+                    esImparUltimoImpreso.signal();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } finally {
